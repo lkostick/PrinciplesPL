@@ -43,7 +43,12 @@ let unimplemented () =
 			 in a list. 
 *)
 
-let count_occurrences elm l = unimplemented () ;;
+let rec aux_count_occurences elm l cnt =
+   match l with
+   | [] -> cnt
+   | x :: xs -> if x = elm then aux_count_occurences elm xs (cnt+1) else aux_count_occurences elm xs cnt
+;;
+let count_occurrences elm l = aux_count_occurences elm l 0;;
 
 (*
 # count_occurrences 3 [1;2;3;3;4;5;6] ;;
@@ -79,8 +84,23 @@ let reverse_n n lst = unimplemented () ;; (* ANSWER *)
 			 right elements in the respective partition, the function will be considered as correct.
 *)
 
-let partition l cond_f = unimplemented ();;
 
+let rec t_lst l cond_f =
+   match l with
+   | [] -> []
+   | x::xs -> if cond_f x then [x] @ t_lst xs cond_f else t_lst xs cond_f
+;;
+let rec f_lst l cond_f =
+   match l with
+   | [] -> []
+   | x::xs -> if cond_f x then f_lst xs cond_f else [x] @ f_lst xs cond_f
+;;
+
+let partition l cond_f = 
+   let t_l = t_lst l cond_f in
+   let f_l = f_lst l cond_f in
+   (t_l,f_l)
+;;
 (*
 # partition [-5;-4;-3;-2;-1;0;1;2;3;4;5] (fun n -> n > 0) ;;
 - : int list * int list = ([1;2;3;4;5], [-5;-4;-3;-2;-1;0]) 
@@ -189,7 +209,13 @@ val range : int -> int list = <fun>
        indexing for convenience.
  *)
 
-let nth lst n = unimplemented ();;
+(* TODO This is wrong *)
+ let rec nth lst n = 
+   match lst with
+   (* | [] -> failwith "no nth element in the list" *)
+   | [] -> 0
+   | x :: xs -> if n = 0 then x else nth xs (n-1)
+;;
 
 (*
 # nth [1;0;0;0;0;0;0;0] 1 ;;
