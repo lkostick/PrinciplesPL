@@ -2,7 +2,7 @@
 
 PL Assignment 1
  
-Name                  : 
+Name                  : Logan Kostick
 List of Collaborators :
 
 Please make a good faith effort at listing people you discussed any 
@@ -63,7 +63,16 @@ let count_occurrences elm l = aux_count_occurences elm l 0;;
 			You can assume that n >= 0.
 *)
 
-let reverse_n n lst = unimplemented () ;; (* ANSWER *)
+
+
+let reverse_n n lst =
+   let rec split_list n lst1 lst2 = (*lst1 is the original list*)
+      match lst1 with
+      | [] -> ([], lst2)
+      | hd::tl -> if n >= 1 then split_list (n-1) tl (hd::lst2) else (lst1, lst2)
+   in let (x, y) = split_list n lst [] 
+   in y@x
+;;
 
 (*
 # reverse_n 3 [1;2;3;4;5;6] ;;
@@ -120,7 +129,17 @@ let partition l cond_f =
 
 *)
 
-let slice l init fin jump = unimplemented ();;
+let rec aux_slice lst init fin jump index =
+   match lst with
+      | [] -> []
+      | hd::tl -> if (index >= init) && (index <= fin) then
+                     if (index mod jump) == 0 then hd::aux_slice tl init fin jump (index+1)
+                     else (aux_slice tl init fin jump (index+1))
+                  else aux_slice tl init fin jump (index+1)
+;;
+let slice l init fin jump =
+   if fin < init then [] else aux_slice l init fin jump 0
+;;
 
 (*
 # slice [0;1;2;3;4;5;6;7;8;9] 1 9 2 ;;
@@ -148,7 +167,11 @@ let slice l init fin jump = unimplemented ();;
 
 *)
 
-let list_comprehension source pred compute = unimplemented ();; 
+let rec list_comprehension source pred compute = 
+   match source with
+      | [] -> []
+      | hd::tl -> if (pred hd) then (compute hd)::(list_comprehension tl pred compute) else list_comprehension tl pred compute
+;; 
 
 (*
 # let rec range n = match n with 1 -> [0] | x -> (range (n-1)) @ [x-1] ;;
@@ -209,12 +232,11 @@ val range : int -> int list = <fun>
        indexing for convenience.
  *)
 
-(* TODO This is wrong *)
  let rec nth lst n = 
    match lst with
-   (* | [] -> failwith "no nth element in the list" *)
-   | [] -> 0
-   | x :: xs -> if n = 0 then x else nth xs (n-1)
+   | [] -> failwith "no nth element in the list"
+   (* | [] -> None *)
+   | x :: xs -> if n = 1 then x else nth xs (n-1)
 ;;
 
 (*
@@ -231,7 +253,11 @@ val range : int -> int list = <fun>
 			 as an integer list.
  *)
 
-let fetch_column grid col = unimplemented ();;
+let rec fetch_column grid col = 
+   match grid with
+   | [] -> []
+   | hd::tl -> (nth hd col)::fetch_column tl col
+;;
 
 (*
 # let test_grid = 
@@ -252,7 +278,13 @@ let fetch_column grid col = unimplemented ();;
 			 			verify_list [1; 0; 0; 0; 1; 0; 0; 0] 19 = false;;
 *)
 
-let verify_list lst sum = unimplemented ();;
+let verify_list lst sum =
+   let rec sum_lst lst index =
+      match lst with
+      | [] -> 0
+      | hd::tl -> (hd*index) + sum_lst tl (index+1)
+   in (sum_lst lst 1) = sum
+;;
 
 (*
 # verify_list [0; 0; 0; 1; 1; 1; 0; 1] 23 ;;
@@ -263,7 +295,21 @@ let verify_list lst sum = unimplemented ();;
 
 (* 2d. Now we can put it all together and verify the entire grid! *)
 
-let verify_solution dimension grid row_vals col_vals = unimplemented ();;
+let rec verify_rows grid row_vals =
+   match grid,row_vals with
+   | [], [] -> true
+   | hd, [] -> failwith "dimensions incorrect"
+   | [], hd -> failwith "dimensions incorrect"
+   | hd1::tl1, hd2::tl2 -> (verify_list hd1 hd2) && verify_rows tl1 tl2
+;;
+
+(* let rec verify_cols n grid col_vals = *)
+let rec verify_cols grid col_vals index =
+   match col_vals with
+   | [] -> true
+   | hd::tl -> (verify_list (fetch_column grid index) hd) && verify_cols grid tl (index+1)
+;;
+let verify_solution dimension grid row_vals col_vals = (verify_rows grid row_vals) && (verify_cols grid col_vals 1);;
 
 (*
 # verify_solution 8 test_grid [1;17;11;34;18;22;16;23] [18;3;12;14;14;21;22;32];;
