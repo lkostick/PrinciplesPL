@@ -21,22 +21,27 @@ open Assignment
 let test_count_occurrences _ =
   assert_equal (count_occurrences 0 []) 0;
   assert_equal (count_occurrences 1 [1;1;1;1;1]) 5;
-  assert_equal (count_occurrences 2 [1;3;5;2;4;2]) 2
+  assert_equal (count_occurrences 2 [1;3;5;2;4;2]) 2;
+  assert_equal (count_occurrences 99 [1;3;5;2;4;2]) 0
 
 let test_reverse_n _ =
   assert_equal (reverse_n 1 []) [];
   assert_equal (reverse_n 1 [1;2;3;4;5]) [1;2;3;4;5];
-  assert_equal (reverse_n 3 [5;3;1;7;9]) [1;3;5;7;9]
+  assert_equal (reverse_n 3 [5;3;1;7;9]) [1;3;5;7;9];
+  assert_equal (reverse_n 0 [[1;2];[3;4];[5;6]]) [[1;2];[3;4];[5;6]]
 
 let test_partition _ =
   assert_equal (partition [true; false; true; false; false] (fun b -> not b)) ([false; false; false], [true; true]);
-  assert_equal (partition [1;2;1;1;2;2;1;2;1] (fun n -> (n mod 2) = 0)) ([2;2;2;2], [1;1;1;1;1])
+  assert_equal (partition [1;2;1;1;2;2;1;2;1] (fun n -> (n mod 2) = 0)) ([2;2;2;2], [1;1;1;1;1]);
+  assert_equal (partition [] (fun b -> not b)) ([], [])
 
 let test_slice _ =
   assert_equal (slice ["a";"b";"c";"d";"e";"f";"g";"h";"i"] 2 7 2) (["c"; "e"; "g"]);
   assert_equal (slice [0;1;2;3;4;5;6;7;8;9] 0 1 3) ([0]);
   assert_equal (slice ["a";"b";"c";"d";"e";"f";"g";"h";"i"] 8 1 3) ([]);
-  assert_equal (slice ["a";"b";"c";"d";"e";"f";"g";"h"] 0 20 1) (["a";"b";"c";"d";"e";"f";"g";"h"])
+  assert_equal (slice ["a";"b";"c";"d";"e";"f";"g";"h"] 0 20 1) (["a";"b";"c";"d";"e";"f";"g";"h"]);
+  assert_equal (slice ["a";"b";"c";"d";"e";"f";"g";"h";"i";"j"] 0 5 3) (["a";"d"]);
+  assert_equal (slice [] 0 0 2) ([])
 
 
 let test_list_comprehension _ =
@@ -84,7 +89,8 @@ let test_fetch_column _ =
 
 let test_verify_list _ =
   assert_equal (verify_list [1; 0; 0; 0; 1; 0; 0; 0] 6) true;
-  assert_equal (verify_list [1; 0; 0; 0; 1; 1; 0; 0] 6) false
+  assert_equal (verify_list [1; 0; 0; 0; 1; 1; 0; 0] 6) false;
+  assert_equal (verify_list [] 1) false
 
 let test_verify_solution _ =
   assert_equal (verify_solution 4 test_good_grid_1 [7;1;4;2] [5;4;4;1]) true;

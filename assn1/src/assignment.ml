@@ -235,7 +235,6 @@ val range : int -> int list = <fun>
  let rec nth lst n = 
    match lst with
    | [] -> failwith "no nth element in the list"
-   (* | [] -> None *)
    | x :: xs -> if n = 1 then x else nth xs (n-1)
 ;;
 
@@ -298,8 +297,8 @@ let verify_list lst sum =
 let rec verify_rows grid row_vals =
    match grid,row_vals with
    | [], [] -> true
-   | hd, [] -> failwith "dimensions incorrect"
-   | [], hd -> failwith "dimensions incorrect"
+   | hd, [] -> false
+   | [], hd -> false
    | hd1::tl1, hd2::tl2 -> (verify_list hd1 hd2) && verify_rows tl1 tl2
 ;;
 
